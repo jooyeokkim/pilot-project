@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}enroll.html{% endblock %}
+
+{% block snack-enroll-extra-classes %}active{% endblock %}
+
+{% block content %}
+    <h5 class="my-3 border-bottom pb-2">원하시는 간식을 신청해주세요^^</h5>
+    <form method="post" class="post-form my-3" enctype="multipart/form-data">
+        {% csrf_token %}
+    	{{ modelForm.as_p }}
+        <input type="submit" value="제출" />
+    </form>
+{% endblock %}

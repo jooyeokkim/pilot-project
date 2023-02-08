@@ -5,12 +5,12 @@ from user.models import User, EmailHistory
 
 @admin.register(Snack)
 class SnackAdmin(admin.ModelAdmin):
-    list_display = ['name', 'image', 'url', 'description', 'state', 'arrive_month']
+    list_display = ['name', 'image', 'url', 'description', 'is_accepted', 'supply_month']
 
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ['email', 'username', 'password']
+    list_display = ['email', 'username', 'password', 'is_active', 'is_staff', 'is_superuser']
 
 
 @admin.register(EmailHistory)
