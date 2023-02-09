@@ -5,7 +5,7 @@ from user.models import User, EmailHistory
 
 @admin.register(Snack)
 class SnackAdmin(admin.ModelAdmin):
-    list_display = ['name', 'image', 'url', 'description', 'is_accepted', 'supply_month']
+    list_display = ['name', 'image', 'url', 'description', 'is_accepted', 'supply_year', 'supply_month']
 
 
 @admin.register(User)

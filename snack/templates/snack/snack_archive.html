@@ -4,16 +4,16 @@
 {% block title %}snack_list.html{% endblock %}
 
 {% block content %}
-    <h5 class="my-3 border-bottom pb-2">간식 신청 목록(전체)</h5>
-    <table class="table table-hover table-bordered table-striped text-center align-middle">
+    <h5 class="my-3 border-bottom pb-2">{% block list-name %}간식 신청 목록(전체){% endblock %}</h5>
+    <table class="table table-bordered table-striped text-center align-middle">
         <thead>
         <tr>
             <th scope="col" width="15%">간식 이름</th>
             <th scope="col" width="15%">사진</th>
             <th scope="col" width="20%">구매 URL</th>
             <th scope="col" width="20%">설명</th>
-            <th scope="col" width="15%">신청 일자</th>
-            <th scope="col" width="15%">주문 상태</th>
+            <th scope="col" width="14%">신청 일자</th>
+            <th scope="col" width="16%">주문 상태</th>
         </tr>
         </thead>
         <tbody>
@@ -31,9 +31,9 @@
                     <td>{{ snack.description }}</td>
                     <td>{{ snack.create_dt }}</td>
                     {% if snack.is_accepted %}
-                        <td>{{ snack.supply_month }}월 비치 예정</td>
+                        <td><span style="color:mediumseagreen">●</span> {{ snack.supply_year }}년 {{ snack.supply_month }}월 비치 예정</td>
                     {% else %}
-                        <td>주문 대기중</td>
+                        <td><span style="color:orange">●</span> 주문 대기중</td>
                     {% endif %}
                 </tr>
             {% endfor %}

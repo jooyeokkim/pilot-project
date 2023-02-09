@@ -19,12 +19,20 @@
         </button>
         <div class="collapse navbar-collapse ms-4" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link {% block snack-monthly-list-extra-classes %}{% endblock %}" aria-current="page" href="{% url 'snack:snack_archive' %}">월별 간식 신청 목록</a>
+            <li class="nav-item dropdown ms-4">
+              <a class="nav-link dropdown-toggle {% block snack-monthly-list-extra-classes %}{% endblock %}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                월별 비치 예정 목록
+              </a>
+              <ul class="dropdown-menu">
+                  {% for time in timelist %}
+                      <li><a class="dropdown-item" href="{% url 'snack:monthly_list' time.0 time.1 %}">{{ time.0 }}/{% if time.1 < 10 %}0{% endif %}{{ time.1 }}</a></li>
+                  {% endfor %}
+              </ul>
             </li>
             <li class="nav-item ms-4">
               <a class="nav-link {% block snack-enroll-extra-classes %}{% endblock %}" href="{% url 'snack:enroll' %}">간식 신청</a>
             </li>
+
           </ul>
           <ul class="navbar-nav me-4 mb-2 mb-lg-0">
             <li class="nav-item dropdown ms-4">

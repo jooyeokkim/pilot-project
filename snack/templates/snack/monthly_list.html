@@ -1,0 +1,8 @@
+{% extends 'snack/snack_archive.html' %}
+
+
+{% block title %}monthly_list.html{% endblock %}
+
+{% block snack-monthly-list-extra-classes %}active{% endblock %}
+
+{% block list-name %}월별 비치 예정 목록 ({{ time.0 }}/{% if time.1 < 10 %}0{% endif %}{{ time.1 }}){% endblock %}

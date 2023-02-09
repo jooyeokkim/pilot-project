@@ -8,6 +8,7 @@ class Snack(models.Model):
     url = models.URLField('URL', max_length=500)
     description = models.CharField('DESCRIPTION', max_length=300, blank=True, help_text=' (개수 등 설명 추가)')
     is_accepted = models.BooleanField('IS_ACCEPTED', default=False)
+    supply_year = models.PositiveSmallIntegerField('SUPPLY_YEAR', default=2023, null=True)
     supply_month = models.PositiveSmallIntegerField(
         'SUPPLY_MONTH', null=True,
         validators=[
