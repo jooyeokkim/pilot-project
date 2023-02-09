@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'snack.apps.SnackConfig',
     'user.apps.UserConfig',
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [
