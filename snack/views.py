@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.views.generic import CreateView, ListView
 from django.views.generic.dates import ArchiveIndexView
 
-from .form import SnackForm
+from .forms import SnackForm
 from .models import Snack
 
 
