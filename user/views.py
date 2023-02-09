@@ -1,2 +1,1 @@
-
-
+# 회원 탈퇴도 request.user.is_active 로직을 넣음으로써 버그를 방지합시다.
