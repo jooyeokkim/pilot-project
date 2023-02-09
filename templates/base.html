@@ -41,7 +41,7 @@
                     {{ user.get_username }}
                   </a>
                   <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">로그아웃</a></li>
+                    <li><a class="dropdown-item" href="{% url 'logout' %}">로그아웃</a></li>
                     <li><a class="dropdown-item" href="#">회원 탈퇴</a></li>
                   </ul>
                 {% else %}
@@ -49,8 +49,8 @@
                     Anonymous
                   </a>
                   <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">로그인</a></li>
-                    <li><a class="dropdown-item" href="#">회원 가입</a></li>
+                    <li><a class="dropdown-item" href="{% url 'login' %}">로그인</a></li>
+                    <li><a class="dropdown-item" href="{% url 'register' %}">회원 가입</a></li>
                   </ul>
                 {% endif %}
             </li>

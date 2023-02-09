@@ -17,12 +17,15 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from djangoProject.views import UserCreateView, UserCreateDoneTV
 
-from .views import HomeView
 from snack.views import SnackAV
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', SnackAV.as_view(), name='home'),
     path('snack/', include('snack.urls')),
+    path('accounts/', include('django.contrib.auth.urls')),
+    path('accounts/register/', UserCreateView.as_view(), name='register'),
+    path('accounts/register/done', UserCreateDoneTV.as_view(), name='register_done'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

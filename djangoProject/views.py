@@ -1,12 +1,14 @@
-from django.views.generic import TemplateView
-from user.models import User
+from django.urls import reverse_lazy
+from django.views.generic import TemplateView, CreateView
 
-class HomeView(TemplateView):
-    user=User.objects.all()
-    userList=list(user)
-    print("id", userList)
-    template_name='home.html'
+from user.form import SignupForm
 
-    def get(self, request, *args, **kwargs):
-        context = self.get_context_data(**kwargs)
-        return self.render_to_response(context)
+
+class UserCreateView(CreateView):
+    template_name='registration/register.html'
+    form_class=SignupForm
+    success_url=reverse_lazy('register_done')
+
+
+class UserCreateDoneTV(TemplateView):
+    template_name = 'registration/register_done.html'

@@ -32,6 +32,10 @@ class SnackCreateView(CreateView):
 
 
 def snack_create(request):
+    if not request.user.is_active:
+        # 익명의 경우 request.user은 AnonymousUser이며, is_active는 False로 고정되어 있다.
+        return redirect('login')
+
     if request.method == 'POST':
         form = SnackForm(request.POST, request.FILES)
         if form.is_valid():
