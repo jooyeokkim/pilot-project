@@ -4,11 +4,7 @@
 
 {% block content %}
 
-    <h1>Registration Completed Successfully</h1>
-    <br>
+    <h1 class="mt-4">회원가입 완료되었습니다!</h1>
 
-    <p>Thank you for registering.</p>
-
-    <p class="font-italic"><a href="{% url 'login' %}">Log in</a></p>
-
+    <a href="{% url 'login' %}" class="btn btn-outline-danger font-italic mt-4">로그인 화면으로 이동</a>
 {% endblock %}

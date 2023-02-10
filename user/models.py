@@ -28,7 +28,7 @@ class UserManager(BaseUserManager):
         return user
 
 
-class User(AbstractUser, PermissionsMixin): # 일반 사용자가 관리자가 될 수도 있기 때문에 모두 상속
+class User(AbstractUser): # 일반 사용자가 관리자가 될 수도 있기 때문에 모두 상속
     objects = UserManager()
     email = models.EmailField('EMAIL', max_length=255, unique=True)
     username = models.CharField('USERNAME', max_length=150, unique=True)

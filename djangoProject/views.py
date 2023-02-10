@@ -1,5 +1,6 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView, CreateView
+from django.views.generic import TemplateView, CreateView, DeleteView, RedirectView
 
 from user.forms import SignupForm
 
@@ -12,3 +13,15 @@ class UserCreateView(CreateView):
 
 class UserCreateDoneTV(TemplateView):
     template_name = 'registration/register_done.html'
+
+
+class UserDeleteView(LoginRequiredMixin, RedirectView):
+    pattern_name = 'home'
+
+    def get(self, request, *args, **kwargs):
+        current_user=self.request.user
+        current_user.is_active = False
+        current_user.is_staff = False
+        current_user.is_superuser = False
+        current_user.save(using='default')
+        return super().get(request, *args, **kwargs)
