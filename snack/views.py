@@ -26,11 +26,6 @@ class MonthlySnackLV(ListView):
         return Snack.objects.filter(supply_year__exact=self.kwargs['year']).filter(supply_month__exact=self.kwargs['month'])
 
 
-class SnackCreateView(CreateView):
-    template_name='snack/enroll.html'
-    form_class=SnackForm
-
-
 def snack_create(request):
     if not request.user.is_active:
         # 익명의 경우 request.user은 AnonymousUser이며, is_active는 False로 고정되어 있다.
