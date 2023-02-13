@@ -4,7 +4,7 @@ from snack import views
 app_name='snack'
 urlpatterns = [
     # /snack/enroll/
-    path('enroll/', views.snack_create, name='enroll'),
+    path('enroll/', views.SnackCV.as_view(), name='enroll'),
     # /snack/snack_archive/
     path('snack_archive/', views.SnackAV.as_view(), name='snack_archive'),
     # /snack/monthly_list
