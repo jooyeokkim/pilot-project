@@ -13,4 +13,4 @@ def get_timelist(self):
             timelist.append([now_year + 1, now_mon + i - 12])
         else:
             timelist.append([now_year, now_mon + i])
-    return {'timelist':timelist}
+    return {'timelist': timelist}
