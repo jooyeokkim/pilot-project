@@ -11,3 +11,4 @@ class SnackAdmin(admin.ModelAdmin):
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
     list_display = ['email', 'username', 'password', 'is_active', 'is_staff', 'is_superuser']
+    fields = ['email', 'username', 'password', 'is_active', 'is_staff', 'is_superuser']

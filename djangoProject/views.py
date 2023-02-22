@@ -1,6 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView, CreateView, DeleteView, RedirectView
+from django.views.generic import TemplateView, CreateView, RedirectView, FormView
 
 from user.forms import SignupForm
 
@@ -21,7 +21,5 @@ class UserDeleteView(LoginRequiredMixin, RedirectView):
     def get(self, request, *args, **kwargs):
         current_user = self.request.user
         current_user.is_active = False
-        current_user.is_staff = False
-        current_user.is_superuser = False
         current_user.save(using = 'default')
         return super().get(request, *args, **kwargs)

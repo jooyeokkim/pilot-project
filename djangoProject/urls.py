@@ -19,11 +19,11 @@ from django.conf import settings
 from django.conf.urls.static import static
 from djangoProject.views import *
 
-from snack.views import SnackAV
+from snack.views import SnackLV
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', SnackAV.as_view(), name='home'),
+    path('', SnackLV.as_view(), name='home'),
     path('snack/', include('snack.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/register/', UserCreateView.as_view(), name='register'),

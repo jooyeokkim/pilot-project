@@ -30,8 +30,11 @@ class UserManager(BaseUserManager):
 
 class User(AbstractUser):
     objects = UserManager()
-    email = models.EmailField('EMAIL', max_length=255, unique=True)
-    username = models.CharField('USERNAME', max_length=150, unique=True)
+    email = models.EmailField('이메일(ID)', max_length=255, unique=True)
+    username = models.CharField('이름', max_length=150)
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
 
     def __str__(self):
         return self.email

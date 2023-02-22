@@ -26,7 +26,7 @@
                         <td><img src="{% static 'image/snack/default_snack_image.jpeg' %}" width="100px" height="100px"></td>
                     {% endif %}
                     <td><a href="{{ snack.url }}" style="font-size:12px">
-                        {{ snack.url|slice:":70" }}...{% if snack.url|length > 70 %}(생략){% endif %}
+                        {{ snack.url|slice:":70" }}{% if snack.url|length > 70 %}...(생략){% endif %}
                     </a></td>
                     <td>{{ snack.description }}</td>
                     <td>{{ snack.create_dt }}</td>
