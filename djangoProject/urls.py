@@ -29,4 +29,5 @@ urlpatterns = [
     path('accounts/register/', UserCreateView.as_view(), name='register'),
     path('accounts/register/done/', UserCreateDoneTV.as_view(), name='register_done'),
     path('accounts/delete/', UserDeleteView.as_view(), name='delete'),
+    path('example/', include('example.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

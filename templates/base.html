@@ -42,7 +42,7 @@
                   </a>
                   <ul class="dropdown-menu">
                     <li><a class="dropdown-item" href="{% url 'logout' %}">로그아웃</a></li>
-                    <li><a class="dropdown-item" href="{% url 'delete' %}" onclick="delcheck()">회원 탈퇴</a></li>
+                    <li><a class="dropdown-item" href="{% url 'delete' %}" onclick="return delcheck();">회원 탈퇴</a></li>
                   </ul>
                 {% else %}
                   <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -72,7 +72,7 @@
                 alert("탈퇴되었습니다.")
                 return true;
             } else {
-                return false
+                return false;
             }
         }
     </script>
