@@ -22,13 +22,11 @@ class LoginView(generics.GenericAPIView):
         token = serializer.validated_data
         return Response(
             {
-                "id": token.user.id,
                 "username": token.user.username,
                 "token": token.key,
             },
             status=status.HTTP_200_OK
         )
-
 
 
 class QuitView(APIView):

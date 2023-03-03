@@ -21,11 +21,11 @@ class SnackViewSet(mixins.CreateModelMixin,
     pagination_class = SnackPagination
 
     def get_permissions(self):
-        if self.request.method=='GET':
-            permission_classes = []
+        if self.action in ['list', 'retrieve', 'monthly_snack_list']:
+            self.permission_classes = []
         else:
-            permission_classes = [IsAuthenticated,]
-        return [permission() for permission in permission_classes]
+            self.permission_classes = [IsAuthenticated,]
+        return super().get_permissions()
 
     # /api/snack/accepted_snack_list/
     @action(detail=False, permission_classes=[])
