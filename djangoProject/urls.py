@@ -17,17 +17,33 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from djangoProject.views import *
 
+from rest_framework import routers
+
+from user import views
 from snack.views import SnackLV
+from snack.api_views import SnackViewSet
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', SnackLV.as_view(), name='home'),
     path('snack/', include('snack.urls')),
-    path('accounts/', include('django.contrib.auth.urls')),
-    path('accounts/register/', UserCreateView.as_view(), name='register'),
-    path('accounts/register/done/', UserCreateDoneTV.as_view(), name='register_done'),
-    path('accounts/delete/', UserDeleteView.as_view(), name='delete'),
-    path('example/', include('example.urls')),
+    path('user/', include('user.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+urlpatterns += [
+    path('accounts/', include('django.contrib.auth.urls')),
+    path('accounts/register/', views.UserCreateView.as_view(), name='register'),
+    path('accounts/register/done/', views.UserCreateDoneTV.as_view(), name='register_done'),
+    path('accounts/delete/', views.UserDeleteView.as_view(), name='delete'),
+]
+
+urlpatterns += [
+    path('api/snack/', include('snack.api_urls')),
+    path('api/user/', include('user.api_urls')),
+]
+
+router = routers.SimpleRouter()
+router.register('api/snack', SnackViewSet)
+
+urlpatterns += router.urls

@@ -23,10 +23,7 @@
               <a class="nav-link dropdown-toggle {% block snack-monthly-list-extra-classes %}{% endblock %}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 월별 비치 예정 목록
               </a>
-              <ul class="dropdown-menu">
-                  {% for time in timelist %}
-                      <li><a class="dropdown-item" href="{% url 'snack:monthly_list' time.0 time.1 %}">{{ time.0 }}/{% if time.1 < 10 %}0{% endif %}{{ time.1 }}</a></li>
-                  {% endfor %}
+              <ul id="month_list" class="dropdown-menu">
               </ul>
             </li>
             <li class="nav-item ms-4">
@@ -35,24 +32,7 @@
 
           </ul>
           <ul class="navbar-nav me-4 mb-2 mb-lg-0">
-            <li class="nav-item dropdown ms-4">
-                {% if user.is_active %}
-                  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    {{ user.username }}
-                  </a>
-                  <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="{% url 'logout' %}">로그아웃</a></li>
-                    <li><a class="dropdown-item" href="{% url 'delete' %}" onclick="return delcheck();">회원 탈퇴</a></li>
-                  </ul>
-                {% else %}
-                  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Anonymous
-                  </a>
-                  <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="{% url 'login' %}">로그인</a></li>
-                    <li><a class="dropdown-item" href="{% url 'register' %}">회원 가입</a></li>
-                  </ul>
-                {% endif %}
+            <li id="account-dropdown" class="nav-item dropdown ms-4">
             </li>
             <li class="nav-item ms-4">
               <a class="nav-link" href="{% url 'admin:index' %}">Admin</a>
@@ -67,10 +47,70 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script>
-        function delcheck(){
-            if(confirm("정말로 탈퇴하시겠습니까?")) {
-                alert("탈퇴되었습니다.")
-                return true;
+        var username = localStorage.getItem("snack_username");
+        var token = localStorage.getItem("snack_token");
+
+        if(username == null) {
+            var dropDownStr = "<a class=\"nav-link dropdown-toggle\" href=\"#\" role=\"button\" data-bs-toggle=\"dropdown\" aria-expanded=\"false\">Anonymous</a>";
+            dropDownStr += "<ul class=\"dropdown-menu\">";
+            dropDownStr += "<li><a class=\"dropdown-item\" href=\"{% url 'login' %}\">로그인</a></li>";
+            dropDownStr += "<li><a class=\"dropdown-item\" href=\"{% url 'register' %}\">회원 가입</a></li>"
+            dropDownStr += "</ul>"
+        }
+        else {
+            var dropDownStr = "<a class=\"nav-link dropdown-toggle\" href=\"#\" role=\"button\" data-bs-toggle=\"dropdown\" aria-expanded=\"false\">"+username+"</a>"
+            dropDownStr += "<ul class=\"dropdown-menu\">";
+            dropDownStr += "<li><a class=\"dropdown-item\" href=\"#\" onclick=\"return logoutCheck();\">로그아웃</a></li>";
+            dropDownStr += "<li><a class=\"dropdown-item\" href=\"#\" onclick=\"return delCheck();\">회원 탈퇴</a></li>"
+            dropDownStr += "</ul>"
+        }
+
+        $('#account-dropdown:last').append(dropDownStr);
+
+        $.ajax({
+            url: "/api/snack/month_list/",
+            type: "GET",
+            dataType: "json",
+        }).done(function(res) {
+            var dateList = res.month_list;
+            $('#month_list').append("<li><a class=\"dropdown-item\" href=\"#\">이전 간식들</a></li>");
+            for(var i=0; i<dateList.length; i++) {
+                var date = dateList[i]
+                var href = "<li><a class=\"dropdown-item\" href=\"/snack/monthly_list/"+date[0]+"/"+date[1]+"/\">"+date[0]+"년 "+date[1]+"월</a></li>";
+                $('#month_list').append(href);
+            }
+        })
+
+        function removeAllItemsFromLocalStorage() {
+            localStorage.removeItem("snack_username");
+            localStorage.removeItem("snack_token");
+        }
+
+        function delCheck() {
+            if (confirm("정말로 탈퇴하시겠습니까?")) {
+                $.ajax({
+                    url: "/api/user/quit/",
+                    type: "POST",
+                    headers: {
+                      "Authorization": "Token "+token,
+                    },
+                }).done(function(res) {
+                    alert("탈퇴되었습니다.");
+                    removeAllItemsFromLocalStorage();
+                    window.location.replace("/");
+                }).fail(function(request, status, error) {
+                    alert(request.responseText);
+                })
+            } else {
+                return false;
+            }
+        }
+
+        function logoutCheck(){
+            if(confirm("로그아웃 하시겠습니까?")) {
+                alert("로그아웃 되었습니다.")
+                removeAllItemsFromLocalStorage();
+                window.location.replace("/");
             } else {
                 return false;
             }

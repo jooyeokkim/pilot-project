@@ -4,62 +4,61 @@
 {% block title %}snack_list.html{% endblock %}
 
 {% block content %}
-    <h5 class="my-3 border-bottom pb-2">{% block list-name %}간식 신청 목록(전체){% endblock %}</h5>
-    <table class="table table-bordered table-striped text-center align-middle">
+    <h5 class="my-3 border-bottom pb-2 list-name">{% block list-name %}간식 신청 목록(전체){% endblock %}</h5>
+    <table id="all-snack-table" class="table table-bordered table-striped text-center align-middle">
         <thead>
         <tr>
             <th scope="col" width="15%">간식 이름</th>
             <th scope="col" width="15%">사진</th>
-            <th scope="col" width="20%">구매 URL</th>
-            <th scope="col" width="20%">설명</th>
-            <th scope="col" width="14%">신청 일자</th>
-            <th scope="col" width="16%">주문 상태</th>
+            <th scope="col" width="10%">구매 URL</th>
+            <th scope="col" width="25%">설명</th>
+            <th scope="col" width="15%">신청 일자</th>
+            <th scope="col" width="20%">주문 상태</th>
         </tr>
         </thead>
         <tbody>
-            {% for snack in object_list %}
-                <tr>
-                    <th>{{snack.name}}</th>
-                    {% if snack.image %}
-                        <td><img src="{{ snack.image.url }}" width="100px" height="100px"></td>
-                    {% else %}
-                        <td><img src="{% static 'image/snack/default_snack_image.jpeg' %}" width="100px" height="100px"></td>
-                    {% endif %}
-                    <td><a href="{{ snack.url }}" style="font-size:12px">
-                        {{ snack.url|slice:":70" }}{% if snack.url|length > 70 %}...(생략){% endif %}
-                    </a></td>
-                    <td>{{ snack.description }}</td>
-                    <td>{{ snack.create_dt }}</td>
-                    {% if snack.is_accepted %}
-                        <td><span style="color:mediumseagreen">●</span> {{ snack.supply_year }}년 {{ snack.supply_month }}월 비치 예정</td>
-                    {% else %}
-                        <td><span style="color:orange">●</span> 주문 대기중</td>
-                    {% endif %}
-                </tr>
-            {% endfor %}
         </tbody>
     </table>
-    <nav aria-label="Page navigation example">
+    <nav id="pagination-nav" aria-label="Page navigation example">
         <ul class="pagination justify-content-center">
-        {% if page_obj.has_previous %}
-            <li class="page-item">
-                <a href="?page={{ page_obj.previous_page_number }}" class="page-link">Previous</a>
-            </li>
-        {% else %}
-            <li class="page-item disabled">
-                <a class="page-link">Previous</a>
-            </li>
-        {% endif %}
-            <li class="ms-3 me-3 mt-1"><span class="align-middle">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span></li>
-        {% if page_obj.has_next %}
-            <li class="page-item">
-                <a href="?page={{ page_obj.next_page_number }}" class="page-link">Next</a>
-            </li>
-        {% else %}
-            <li class="page-item disabled">
-                <a class="page-link">Next</a>
-            </li>
-        {% endif %}
         </ul>
     </nav>
+{% endblock %}
+
+{% block extra-script %}
+    <script>
+        function getPaginatedSnackData(page) {
+            var pageSize = 10;
+            $('#all-snack-table > tbody').empty();
+            $.ajax({
+            url: "/api/snack/?page="+page,
+            type: "GET",
+            dataType: "json",
+            }).done(function(res){
+                var snacks = res.results
+                var totalPage = parseInt((Number(res.count)-1)/pageSize)+1;
+                for(var i=0; i<snacks.length; i++) {
+                    var snack = snacks[i];
+                    var rowStr = "<tr>";
+                    rowStr+="<th>"+snack.name+"</th>";
+                    rowStr+="<td><img src=\""+snack.image+"\" width=\"100px\" height=\"100px\"></td>";
+                    rowStr+="<td><a href=\""+snack.url+"\" style=\"font-size:12px\">구매 링크</a></td>";
+                    rowStr+="<td>"+snack.description+"</td>";
+                    rowStr+="<td>"+snack.create_dt+"</td>";
+                    if(snack.is_accepted) rowStr+="<td><span style=\"color:mediumseagreen\">● </span>"+snack.supply_year
+                        +"년 "+snack.supply_month+"월 비치 예정</td>";
+                    else rowStr+="<td><span style=\"color:orange\">● </span>주문 대기중</td>";
+                    rowStr+="</tr>";
+                    $('#all-snack-table > tbody:last').append(rowStr);
+                }
+                if(res.previous==null) var navStr = "<li class=\"page-item disabled\"><a class=\"page-link\">Previous</a></li>";
+                else var navStr = "<li class=\"page-item\"><a href=\"#\" class=\"page-link\" onclick=\"getPaginatedSnackData("+(page-1)+")\">Previous</a></li>";
+                navStr += "<li class=\"ms-3 me-3 mt-1\"><span class=\"align-middle\">Page "+page+" of "+totalPage+"</span></li>";
+                if(res.next==null) navStr += "<li class=\"page-item disabled\"><a class=\"page-link\">Next</a></li>";
+                else navStr += "<li class=\"page-item\"><a href=\"#\" class=\"page-link\" onclick=\"getPaginatedSnackData("+(page+1)+")\">Next</a></li>";
+                $('#pagination-nav > ul:last').html(navStr);
+            })
+        }
+        getPaginatedSnackData(1);
+    </script>
 {% endblock %}

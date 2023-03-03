@@ -1,8 +1,34 @@
 {% extends 'snack/snack_archive.html' %}
 
-
 {% block title %}monthly_list.html{% endblock %}
 
 {% block snack-monthly-list-extra-classes %}active{% endblock %}
 
-{% block list-name %}월별 비치 예정 목록 ({{ time.0 }}/{% if time.1 < 10 %}0{% endif %}{{ time.1 }}){% endblock %}
+{% block extra-script %}
+    <script>
+        var url_parts = location.href.split('/');
+        $(".list-name").text(url_parts[5]+"년 "+url_parts[6]+"월 비치 예정 목록");
+        $.ajax({
+            url: "/api/snack/monthly_list/"+url_parts[5]+"/"+url_parts[6]+"/",
+            type: "GET",
+            dataType: "json",
+        }).done(function(res){
+            for(var i=0; i<res.length; i++) {
+                var snack = res[i];
+                var rowStr = "<tr>";
+                rowStr+="<th>"+snack.name+"</th>";
+                rowStr+="<td><img src=\""+snack.image+"\" width=\"100px\" height=\"100px\"></td>";
+                rowStr+="<td><a href=\""+snack.url+"\" style=\"font-size:12px\">구매 링크</a></td>";
+                rowStr+="<td>"+snack.description+"</td>";
+                rowStr+="<td>"+snack.create_dt+"</td>";
+                if(snack.is_accepted) rowStr+="<td><span style=\"color:mediumseagreen\">● </span>"+snack.supply_year
+                    +"년 "+snack.supply_month+"월 비치 예정</td>";
+                else rowStr+="<td><span style=\"color:orange\">● </span>주문 대기중</td>";
+                rowStr+="</tr>";
+                $('#all-snack-table > tbody:last').append(rowStr);
+            }
+        }).fail(function(request, status, error){
+            alert(request.responseText);
+        })
+    </script>
+{% endblock %}
