@@ -1,15 +1,22 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse_lazy
-from django.views.generic import CreateView, ListView
-from django.views.generic.dates import ArchiveIndexView
+from django.views.generic import ListView, UpdateView, FormView, TemplateView
 
-from .models import Snack
+from .form import SnackManageForm, SnackRequestForm, SnackEditForm
+from .models import Snack, SnackRequest
 
 
-class SnackLV(ArchiveIndexView):
-    model = Snack
-    date_field = 'create_dt'
-    paginate_by = 20
+# class SnackLV(ArchiveIndexView):
+#     model = Snack
+#     date_field = 'create_dt'
+#     allow_empty = True
+#     paginate_by = 20
+
+
+class SnackRequestListView(TemplateView):
+    template_name = "snack/snack_request_list.html"
+
+
+class SnackRequestLegacyListView(TemplateView):
+    template_name = "snack/snack_request_legacy_list.html"
 
 
 class MonthlySnackLV(ListView):
@@ -18,9 +25,24 @@ class MonthlySnackLV(ListView):
     template_name = 'snack/monthly_list.html'
 
 
-class SnackCV(LoginRequiredMixin, CreateView):
+# class SnackCV(CreateView):
+#     template_name = 'snack/enroll.html'
+#     model = Snack
+#     fields = ('name', 'image', 'url', 'description')
+
+
+class SnackCV(FormView):
     template_name = 'snack/enroll.html'
-    model = Snack
-    fields = ('name', 'image', 'url', 'description')
-    login_url = reverse_lazy('login')
-    success_url = reverse_lazy('home')
+    form_class = SnackRequestForm
+
+
+class SnackEditUV(UpdateView):
+    template_name = 'snack/edit.html'
+    model = SnackRequest
+    form_class = SnackEditForm
+
+
+class SnackManageUV(UpdateView):
+    template_name = 'snack/manage.html'
+    model = SnackRequest
+    form_class = SnackManageForm

@@ -6,35 +6,90 @@
 
 {% block content %}
     <h5 class="my-3 border-bottom pb-2">원하시는 간식을 신청해주세요^^</h5>
-    <form id="enroll-form" method="post" class="post-form my-3" enctype="multipart/form-data">
+    <form id="enroll-form" method="post" class="card pt-3 post-form" enctype="multipart/form-data">
         {% csrf_token %}
-        {{ form.as_p }}
-        <input type="button" value="등록" class="btn btn-info" onclick="enroll()"/>
+        <div id="existing-snacks" class="form-group row ms-2">
+            <div class="col-sm-5">
+                Snack : {{ form.snack }}
+                <input type="button" value="간식이 목록에 없나요?" class="ms-3 btn btn-outline-primary"
+                       onclick="addSnackFields()">
+            </div>
+        </div>
+        <div id="add-snack">
+            <div class="form-group row ms-2 mt-4">
+                <div class="col-sm-5">
+                    Name : {{ form.name }}
+                </div>
+            </div>
+            <div class="form-group row ms-2 mt-4">
+                <div class="col-sm-5">
+                    Image : {{ form.image }}
+                </div>
+            </div>
+            <div class="form-group row ms-2 mt-4">
+                <div class="col-sm-5">
+                    URL : {{ form.url }}
+                </div>
+            </div>
+
+        </div>
+        <div class="form-group row ms-2 mt-4">
+            <div class="col-sm-5">
+                DESCRIPTION : {{ form.description }}
+            </div>
+        </div>
+        <div class="form-group ms-4 mb-2 mt-4">
+            <input type="button" value="등록" class="btn btn-info" onclick="enroll()"/>
+        </div>
     </form>
 {% endblock %}
 
 {% block extra-script %}
     <script>
-        if(localStorage.getItem("snack_username")==null) {
-            alert("로그인이 필요합니다.");
-            location.replace("/accounts/login/");
+        isLogin();
+        $("#add-snack").hide();
+
+        function addSnackFields() {
+            $("#existing-snacks").hide();
+            $("#add-snack").show();
+            $("#id_snack").val('');
         }
+
+        function printFormData(formData) {
+            for (var key of formData.keys())
+                console.log(key + ":" + formData.get(key));
+            return formData;
+        }
+
+        function handleEnrollFormData(formData) {
+            if (formData.get('snack')) {
+                formData.delete("name");
+                formData.delete("image");
+                formData.delete("url");
+            } else {
+                formData.delete("snack");
+            }
+            return formData;
+        }
+
         function enroll() {
             var formData = new FormData($('#enroll-form')[0]);
-            formData.append("image", $('[name="image"]')[0].files[0]);
+            // formData.append("image", $('[name="image"]')[0].files[0]);
+            var enroll = "enroll";
+            if (!formData.get("snack")) enroll = "new_enroll";
             $.ajax({
-                url: "/api/snack/",
+                url: "/api/snack_request/" + enroll + "/",
                 type: "POST",
                 headers: {
-                    "Authorization": "Token "+token,
+                    "Authorization": "Token " + token,
                 },
                 enctype: "multipart/form-data",
-                data: formData,
+                data: handleEnrollFormData(formData),
                 processData: false,
                 contentType: false,
-            }).done(function(res){
+            }).done(function (res) {
                 window.location.replace('/');
-            }).fail(function(request, status, error){
+            }).fail(function (request, status, error) {
                 alert(request.responseText);
             })
         };

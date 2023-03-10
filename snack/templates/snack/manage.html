@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}manage.html{% endblock %}
+
+{% block content %}
+    <h5 class="my-3 border-bottom pb-2">간식 신청 정보 변경</h5>
+    <form id="snack-update-form" method="post" class="post-form my-3" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="button" value="완료" class="btn btn-primary" onclick="snackUpdate(true)"/>
+        <input type="button" value="삭제" class="btn btn-danger ms-2" onclick="snackDelete()"/>
+    </form>
+{% endblock %}
+
+{% block extra-script %}
+    <script>
+        isLogin();
+        function checkIsAccepted(idIsAcceptedDOM, idSupplyYearDOM, idSupplyMonthDOM) {
+            if (idIsAcceptedDOM.is(":checked")) {
+                idSupplyYearDOM.attr("disabled", false);
+                idSupplyMonthDOM.attr("disabled", false);
+            } else {
+                idSupplyYearDOM.attr("disabled", true);
+                idSupplyMonthDOM.attr("disabled", true);
+            }
+        }
+
+        var idIsAcceptedDOM = $("#id_is_accepted");
+        var idSupplyYearDOM = $("#id_supply_year");
+        var idSupplyMonthDOM = $("#id_supply_month");
+        checkIsAccepted(idIsAcceptedDOM, idSupplyYearDOM, idSupplyMonthDOM);
+        idIsAcceptedDOM.change(function () {
+            checkIsAccepted(idIsAcceptedDOM, idSupplyYearDOM, idSupplyMonthDOM);
+        });
+    </script>
+{% endblock %}

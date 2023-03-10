@@ -30,7 +30,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         if data['password1'] != data['password2']:
-             raise serializers.ValidationError({"password1": "비밀번호가 일치하지 않습니다."})
+             raise serializers.ValidationError({'password1': '비밀번호가 일치하지 않습니다.'})
         return data
 
     def create(self, validated_data):
@@ -54,6 +54,13 @@ class LoginSerializer(serializers.Serializer):
             token = Token.objects.get(user=user)
             return token
         raise serializers.ValidationError(
-            {"error": "이메일 또는 비밀번호가 올바르지 않습니다."}
+            {'detail': '이메일 또는 비밀번호가 올바르지 않습니다.'}
         )
+
+
+class BaseUserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ['id', 'email', 'username', 'is_active', 'is_staff', 'is_superuser']
 

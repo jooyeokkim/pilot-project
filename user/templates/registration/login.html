@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block title %}login.html{% endblock %}
+
+{% block content %}
+
+    <h1>Please Login</h1>
+
+    <form id="login-form" method="post" class="card pt-3">{% csrf_token %}
+
+        <div class="form-group row">
+            <label class="col-form-label col-sm-2 ml-3 font-weight-bold" for="id_email">이메일(ID):</label>
+            <div class="col-sm-5">
+                <input type="email" name="email" maxlength="255" autofocus="" class="form-control" required="" id="id_email">
+            </div>
+        </div>
+        <div class="form-group row">
+            {{ form.password|add_label_class:"col-form-label col-sm-2 ml-3 font-weight-bold" }}
+            <div class="col-sm-5">
+                {{ form.password|add_class:"form-control" }}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="offset-sm-2 col-sm-5">
+                <input type="button" value="로그인" class="btn btn-info" onclick="login()"/>
+            </div>
+        </div>
+
+    </form>
+
+{% endblock %}
+
+{% block extra-script %}
+    <script>
+        function login() {
+            var formData = new FormData($('#login-form')[0]);
+            $.ajax({
+                url: "/api/user/login/",
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+            }).done(function(res){
+                localStorage.setItem("snack_username", res.username);
+                localStorage.setItem("snack_token", res.token);
+                window.location.replace('/');
+            }).fail(function(request, status, error){
+                alert(request.responseText);
+            })
+        };
+    </script>
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block title %}register_done.html{% endblock %}
+
+{% block content %}
+
+    <h1 class="mt-4">회원가입 완료되었습니다!</h1>
+
+    <a href="{% url 'login' %}" class="btn btn-outline-danger font-italic mt-4">로그인 화면으로 이동</a>
+{% endblock %}

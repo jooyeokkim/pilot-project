@@ -1,121 +1,95 @@
 <!doctype html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}base.html{% endblock %}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">    {% block extra-style %}{% endblock %}
-  </head>
-  <body>
-  <nav class="navbar navbar-expand-lg bg-body-tertiary" style="background-color: #ef97b1;">
-      <div class="container-fluid">
-        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-egg-fried ms-2" viewBox="0 0 16 16">
-          <path d="M8 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
-          <path d="M13.997 5.17a5 5 0 0 0-8.101-4.09A5 5 0 0 0 1.28 9.342a5 5 0 0 0 8.336 5.109 3.5 3.5 0 0 0 5.201-4.065 3.001 3.001 0 0 0-.822-5.216zm-1-.034a1 1 0 0 0 .668.977 2.001 2.001 0 0 1 .547 3.478 1 1 0 0 0-.341 1.113 2.5 2.5 0 0 1-3.715 2.905 1 1 0 0 0-1.262.152 4 4 0 0 1-6.67-4.087 1 1 0 0 0-.2-1 4 4 0 0 1 3.693-6.61 1 1 0 0 0 .8-.2 4 4 0 0 1 6.48 3.273z"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    {% block extra-style %}{% endblock %}
+</head>
+<body>
+<nav class="navbar navbar-expand-lg bg-body-tertiary" style="background-color: #ef97b1;">
+    <div class="container-fluid">
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-egg-fried ms-2"
+             viewBox="0 0 16 16">
+            <path d="M8 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+            <path d="M13.997 5.17a5 5 0 0 0-8.101-4.09A5 5 0 0 0 1.28 9.342a5 5 0 0 0 8.336 5.109 3.5 3.5 0 0 0 5.201-4.065 3.001 3.001 0 0 0-.822-5.216zm-1-.034a1 1 0 0 0 .668.977 2.001 2.001 0 0 1 .547 3.478 1 1 0 0 0-.341 1.113 2.5 2.5 0 0 1-3.715 2.905 1 1 0 0 0-1.262.152 4 4 0 0 1-6.67-4.087 1 1 0 0 0-.2-1 4 4 0 0 1 3.693-6.61 1 1 0 0 0 .8-.2 4 4 0 0 1 6.48 3.273z"/>
         </svg>
         <a class="navbar-brand ms-2" href="{% url 'home' %}">간식 창고</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse ms-4" id="navbarSupportedContent">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item dropdown ms-4">
-              <a class="nav-link dropdown-toggle {% block snack-monthly-list-extra-classes %}{% endblock %}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                월별 비치 예정 목록
-              </a>
-              <ul id="month_list" class="dropdown-menu">
-              </ul>
-            </li>
-            <li class="nav-item ms-4">
-              <a class="nav-link {% block snack-enroll-extra-classes %}{% endblock %}" href="{% url 'snack:enroll' %}">간식 신청</a>
-            </li>
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item dropdown ms-4">
+                    <a class="nav-link dropdown-toggle {% block snack-monthly-list-extra-classes %}{% endblock %}"
+                       href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        월별 비치 예정 목록
+                    </a>
+                    <ul id="month_list" class="dropdown-menu">
+                    </ul>
+                </li>
+                <li class="nav-item ms-4">
+                    <a class="nav-link {% block snack-enroll-extra-classes %}{% endblock %}"
+                       href="{% url 'snack:enroll' %}">간식 신청</a>
+                </li>
 
-          </ul>
-          <ul class="navbar-nav me-4 mb-2 mb-lg-0">
-            <li id="account-dropdown" class="nav-item dropdown ms-4">
-            </li>
-            <li class="nav-item ms-4">
-              <a class="nav-link" href="{% url 'admin:index' %}">Admin</a>
-            </li>
-          </ul>
+            </ul>
+            <ul class="navbar-nav me-4 mb-2 mb-lg-0">
+                <li id="account-dropdown" class="nav-item dropdown ms-4">
+                </li>
+                <li class="nav-item ms-4">
+                    <a class="nav-link" href="{% url 'user:list' %}">사용자 관리</a>
+                </li>
+            </ul>
         </div>
-      </div>
-    </nav>
-    <div class="container">
-        {% block content %}{% endblock %}
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-    <script>
-        var username = localStorage.getItem("snack_username");
-        var token = localStorage.getItem("snack_token");
+</nav>
+<div class="container">
+    {% block content %}{% endblock %}
+</div>
+<script src="/static/js/snack.js"></script>
+<script src="/static/js/user.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
+        crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script>
+    var username = localStorage.getItem("snack_username");
+    var token = localStorage.getItem("snack_token");
 
-        if(username == null) {
-            var dropDownStr = "<a class=\"nav-link dropdown-toggle\" href=\"#\" role=\"button\" data-bs-toggle=\"dropdown\" aria-expanded=\"false\">Anonymous</a>";
-            dropDownStr += "<ul class=\"dropdown-menu\">";
-            dropDownStr += "<li><a class=\"dropdown-item\" href=\"{% url 'login' %}\">로그인</a></li>";
-            dropDownStr += "<li><a class=\"dropdown-item\" href=\"{% url 'register' %}\">회원 가입</a></li>"
-            dropDownStr += "</ul>"
+    if (username == null) {
+        var dropDownStr = "<a class=\"nav-link dropdown-toggle\" href=\"#\" role=\"button\" data-bs-toggle=\"dropdown\" aria-expanded=\"false\">Anonymous</a>";
+        dropDownStr += "<ul class=\"dropdown-menu\">";
+        dropDownStr += "<li><a class=\"dropdown-item\" href=\"{% url 'login' %}\">로그인</a></li>";
+        dropDownStr += "<li><a class=\"dropdown-item\" href=\"{% url 'register' %}\">회원 가입</a></li>"
+        dropDownStr += "</ul>"
+    } else {
+        var dropDownStr = "<a class=\"nav-link dropdown-toggle\" href=\"#\" role=\"button\" data-bs-toggle=\"dropdown\" aria-expanded=\"false\">" + username + "</a>"
+        dropDownStr += "<ul class=\"dropdown-menu\">";
+        dropDownStr += "<li><a class=\"dropdown-item\" href=\"#\" onclick=\"return logoutCheck();\">로그아웃</a></li>";
+        dropDownStr += "<li><a class=\"dropdown-item\" href=\"#\" onclick=\"return delCheck();\">회원 탈퇴</a></li>"
+        dropDownStr += "</ul>"
+    }
+
+    $('#account-dropdown:last').append(dropDownStr);
+
+    $.ajax({
+        url: "/api/snack_request/month_list/",
+        type: "GET",
+        dataType: "json",
+    }).done(function (res) {
+        var dateList = res.month_list;
+        $('#month_list').append("<li><a class=\"dropdown-item\" href=\"/snack/legacy_list/\">이전 간식들</a></li>");
+        for (var i = 0; i < dateList.length; i++) {
+            var date = dateList[i]
+            var href = "<li><a class=\"dropdown-item\" href=\"/snack/monthly_list/" + date[0] + "/" + date[1] + "/\">" + date[0] + "년 " + date[1] + "월</a></li>";
+            $('#month_list').append(href);
         }
-        else {
-            var dropDownStr = "<a class=\"nav-link dropdown-toggle\" href=\"#\" role=\"button\" data-bs-toggle=\"dropdown\" aria-expanded=\"false\">"+username+"</a>"
-            dropDownStr += "<ul class=\"dropdown-menu\">";
-            dropDownStr += "<li><a class=\"dropdown-item\" href=\"#\" onclick=\"return logoutCheck();\">로그아웃</a></li>";
-            dropDownStr += "<li><a class=\"dropdown-item\" href=\"#\" onclick=\"return delCheck();\">회원 탈퇴</a></li>"
-            dropDownStr += "</ul>"
-        }
-
-        $('#account-dropdown:last').append(dropDownStr);
-
-        $.ajax({
-            url: "/api/snack/month_list/",
-            type: "GET",
-            dataType: "json",
-        }).done(function(res) {
-            var dateList = res.month_list;
-            $('#month_list').append("<li><a class=\"dropdown-item\" href=\"#\">이전 간식들</a></li>");
-            for(var i=0; i<dateList.length; i++) {
-                var date = dateList[i]
-                var href = "<li><a class=\"dropdown-item\" href=\"/snack/monthly_list/"+date[0]+"/"+date[1]+"/\">"+date[0]+"년 "+date[1]+"월</a></li>";
-                $('#month_list').append(href);
-            }
-        })
-
-        function removeAllItemsFromLocalStorage() {
-            localStorage.removeItem("snack_username");
-            localStorage.removeItem("snack_token");
-        }
-
-        function delCheck() {
-            if (confirm("정말로 탈퇴하시겠습니까?")) {
-                $.ajax({
-                    url: "/api/user/quit/",
-                    type: "POST",
-                    headers: {
-                      "Authorization": "Token "+token,
-                    },
-                }).done(function(res) {
-                    alert("탈퇴되었습니다.");
-                    removeAllItemsFromLocalStorage();
-                    window.location.replace("/");
-                }).fail(function(request, status, error) {
-                    alert(request.responseText);
-                })
-            } else {
-                return false;
-            }
-        }
-
-        function logoutCheck(){
-            if(confirm("로그아웃 하시겠습니까?")) {
-                alert("로그아웃 되었습니다.")
-                removeAllItemsFromLocalStorage();
-                window.location.replace("/");
-            } else {
-                return false;
-            }
-        }
-    </script>
-    {% block extra-script %}{% endblock %}
-  </body>
+    })
+</script>
+{% block extra-script %}{% endblock %}
+</body>
 </html>

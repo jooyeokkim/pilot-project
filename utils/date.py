@@ -1,7 +1,7 @@
 import time
 
 
-def get_month_list(self):
+def get_month_list():
     month_list = []
     now = time.localtime(time.time())
     now_year = now.tm_year

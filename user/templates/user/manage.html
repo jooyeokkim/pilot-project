@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}user_list.html{% endblock %}
+
+{% block content %}
+    <h5 class="my-3 border-bottom pb-2 list-name">유저 목록</h5>
+    <table id="user-table" class="table table-bordered table-striped text-center align-middle">
+        <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">EMAIL</th>
+            <th scope="col">USERNAME</th>
+            <th scope="col">회원 여부</th>
+            <th scope="col">관리자 여부</th>
+            <th scope="col">관리자 권한</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <nav id="pagination-nav" aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+        </ul>
+    </nav>
+{% endblock %}
+
+{% block extra-script %}
+    <script>
+        isLogin();
+        var token = localStorage.getItem("snack_token");
+        $.ajax({
+            url: "/api/user/",
+            type: "GET",
+            dataType: "json",
+        }).done(function (res) {
+            for (var i = 0; i < res.length; i++) {
+                var user = res[i];
+                var activeSymbol = "X";
+                var adminSymbol = "X";
+                if (user.is_active) activeSymbol = "O";
+                if (user.is_superuser) adminSymbol = "O";
+                var rowStr = "<tr>";
+                rowStr += "<td>" + user.id + "</td>";
+                rowStr += "<td>" + user.email + "</td>";
+                rowStr += "<td>" + user.username + "</td>";
+                rowStr += "<td>" + activeSymbol + "</td>";
+                rowStr += "<td>" + adminSymbol + "</td>";
+                if (user.is_superuser) rowStr += "<td><a class=\"btn btn-danger\" href=\"#\" onclick=\"changeAuth(" + user.id + ", false)\">" + "해제하기" + "</a></td>";
+                else rowStr += "<td><a class=\"btn btn-primary\" href=\"#\" onclick=\"changeAuth(" + user.id + ", true)\">" + "부여하기" + "</a></td>";
+                rowStr += "</a></tr>";
+                $('#user-table > tbody:last').append(rowStr);
+            }
+        })
+    </script>
+{% endblock %}

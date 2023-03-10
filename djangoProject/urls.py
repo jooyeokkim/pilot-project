@@ -21,12 +21,13 @@ from django.conf.urls.static import static
 from rest_framework import routers
 
 from user import views
-from snack.views import SnackLV
-from snack.api_views import SnackViewSet
+from snack.views import SnackRequestListView
+from snack.api_views import SnackRequestViewSet, SnackEmotionViewSet
+from user.api_views import UserViewSet
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', SnackLV.as_view(), name='home'),
+    path('', SnackRequestListView.as_view(), name='home'),
     path('snack/', include('snack.urls')),
     path('user/', include('user.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
@@ -39,11 +40,17 @@ urlpatterns += [
 ]
 
 urlpatterns += [
-    path('api/snack/', include('snack.api_urls')),
+    path('api/snack_request/', include('snack.api_urls')),
     path('api/user/', include('user.api_urls')),
 ]
 
+urlpatterns += [
+    path('manage/user/', include('user.urls')),
+]
+
 router = routers.SimpleRouter()
-router.register('api/snack', SnackViewSet)
+router.register('api/snack_request', SnackRequestViewSet)
+router.register('api/user', UserViewSet)
+router.register('api/snack_emotion', SnackEmotionViewSet)
 
 urlpatterns += router.urls

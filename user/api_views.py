@@ -1,16 +1,59 @@
-from rest_framework import generics, status
-from rest_framework.response import Response
-from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from rest_framework import generics, viewsets, mixins, status
 from rest_framework.authtoken.models import Token
-from rest_framework.views import APIView
+from rest_framework.decorators import action
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from rest_framework.response import Response
 
 from .models import User
-from .serializers import RegisterSerializer, LoginSerializer
+from .serializers import RegisterSerializer, LoginSerializer, BaseUserSerializer
 
 
-class RegisterView(generics.CreateAPIView):
+class UserViewSet(mixins.ListModelMixin,
+                  mixins.CreateModelMixin,
+                  mixins.UpdateModelMixin,
+                  viewsets.GenericViewSet):
     queryset = User.objects.all()
-    serializer_class = RegisterSerializer
+
+    def get_permissions(self):
+        if self.action in ['upgrade', 'downgrade']:
+            self.permission_classes = [IsAdminUser]
+        elif self.action in ['quit']:
+            self.permission_classes = [IsAuthenticated]
+        return super().get_permissions()
+
+    def get_serializer_class(self):
+        if self.action in ['create']:
+            return RegisterSerializer
+        else:
+            return BaseUserSerializer
+
+    # /api/user/9/upgrade/
+    @action(detail=True)
+    def upgrade(self, request, pk):
+        user = User.objects.get(pk=pk)
+        user.is_staff = True
+        user.is_superuser = True
+        user.save()
+        return Response(status=status.HTTP_200_OK)
+
+    # /api/user/9/downgrade/
+    @action(detail=True)
+    def downgrade(self, request, pk):
+        user = User.objects.get(pk=pk)
+        user.is_staff = False
+        user.is_superuser = False
+        user.save()
+        return Response(status=status.HTTP_200_OK)
+
+    # /api/user/quit/
+    @action(detail=False)
+    def quit(self, request):
+        # userId = Token.objects.get(key=request.auth.key).user_id
+        # user = User.objects.get(id=userId)
+        user = request.user
+        user.is_active = False
+        user.save()
+        return Response(status=status.HTTP_200_OK)
 
 
 class LoginView(generics.GenericAPIView):
@@ -27,36 +70,3 @@ class LoginView(generics.GenericAPIView):
             },
             status=status.HTTP_200_OK
         )
-
-
-class QuitView(APIView):
-    permission_classes = [IsAuthenticated,]
-
-    def post(self, request):
-        userId = Token.objects.get(key=request.auth.key).user_id
-        user = User.objects.get(id=userId)
-        user.is_active = False
-        user.save()
-        return Response(status=status.HTTP_200_OK)
-
-
-class UpgradeAuthorityView(APIView):
-    permission_classes = [IsAdminUser,]
-
-    def post(self, request, pk):
-        user = User.objects.get(pk=pk)
-        user.is_staff = True
-        user.is_superuser = True
-        user.save()
-        return Response(status=status.HTTP_200_OK)
-
-
-class DowngradeAuthorityView(APIView):
-    permission_classes = [IsAdminUser,]
-
-    def post(self, request, pk):
-        user = User.objects.get(pk=pk)
-        user.is_staff = False
-        user.is_superuser = False
-        user.save()
-        return Response(status=status.HTTP_200_OK)
