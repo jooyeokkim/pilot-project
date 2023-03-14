@@ -30,7 +30,7 @@ urlpatterns += [
 ]
 
 urlpatterns += [
-    path('manage/user/', include('user.urls')),
+    path('manage/user/', views.UserListView.as_view(), name='user_list'),
 ]
 
 router = routers.SimpleRouter()
