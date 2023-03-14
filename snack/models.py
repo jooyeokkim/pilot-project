@@ -1,5 +1,6 @@
-from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db import models
+from django.db.models import Count, Q, Case, When, FloatField, F
 
 from user.models import User
 
@@ -19,6 +20,21 @@ class Snack(models.Model):
         return self.name
 
 
+class SnackRequestQueryset(models.QuerySet):
+    def order_by_like_proportion(self):
+        return self.annotate(
+            like=Count('id', filter=Q(snackEmotions__name="like")),
+            dislike=Count('id', filter=Q(snackEmotions__name="dislike")),
+            proportion=Case(
+                When(
+                    Q(like=0) & Q(dislike=0), then=0.5
+                ),
+                default=F('like') * 1.0 / (F('like') + F('dislike')),
+                output_field=FloatField()
+            )
+        ).order_by('-proportion', '-like')
+
+
 class SnackRequest(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="snackRequests")
     snack = models.ForeignKey(Snack, on_delete=models.CASCADE, related_name="snackRequests")
@@ -34,14 +50,15 @@ class SnackRequest(models.Model):
         help_text=' 예) 7'
     )
     create_dt = models.DateField('CREATE_DT', auto_now_add=True)  # 생성될 때 시각을 자동으로 기록
+    objects = SnackRequestQueryset.as_manager()
 
     @property
     def likes(self):
-        return SnackEmotion.objects.filter(snack_request=self, name="like").count()
+        return self.snackEmotions.filter(name="like").count()
 
     @property
     def dislikes(self):
-        return SnackEmotion.objects.filter(snack_request=self, name="dislike").count()
+        return self.snackEmotions.filter(name="dislike").count()
 
 
     class Meta:
@@ -59,3 +76,8 @@ class SnackEmotion(models.Model):
     name = models.CharField('name', max_length=50, choices=EmotionCategory.choices)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="snackEmotions")
     snack_request = models.ForeignKey(SnackRequest, on_delete=models.CASCADE, related_name="snackEmotions")
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'snack_request'], name='user_snack_request_unique_constraint')
+        ]

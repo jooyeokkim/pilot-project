@@ -37,7 +37,7 @@ class User(AbstractUser):
     REQUIRED_FIELDS = ['username']
 
     class Meta:
-        ordering = ["id"]
+        ordering = ['id']
 
     def __str__(self):
         return self.email

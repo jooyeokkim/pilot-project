@@ -1,6 +1,6 @@
 from django import forms
 
-from snack.models import Snack, SnackRequest
+from snack.models import SnackRequest
 
 
 class SnackEditForm(forms.ModelForm):

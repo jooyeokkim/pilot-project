@@ -76,12 +76,12 @@ class SnackEmotionSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         request = self.context.get('request', None)
-        emotion = SnackEmotion.objects.filter(snack_request=validated_data['snack_request'],
-                                              user=request.user.id)
-        if emotion.count():
-            if emotion[0].name != validated_data['name']:  # 이미 다른 감정을 누른 상태
-                SnackEmotion.objects.create(**validated_data, user=request.user)
-            emotion[0].delete()
-        else:
-            SnackEmotion.objects.create(**validated_data, user=request.user)
-        return validated_data
+        validated_name = validated_data['name']
+        emotion, is_created = SnackEmotion.objects.get_or_create(snack_request=validated_data['snack_request'], user=request.user, defaults={'name': validated_name}) # defaults는 생성시에만 동작
+        if not is_created:
+            if emotion.name == validated_name:
+                emotion.delete()
+            else:
+                emotion.name = validated_name
+                emotion.save()
+        return emotion

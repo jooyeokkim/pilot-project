@@ -16,7 +16,8 @@ class SnackRequestViewSet(mixins.CreateModelMixin,
                           mixins.UpdateModelMixin,
                           mixins.DestroyModelMixin,
                           viewsets.GenericViewSet):
-    queryset = SnackRequest.objects.all()
+
+    queryset = SnackRequest.objects.order_by_like_proportion()
     serializer_class = SnackRequestSerializer
     pagination_class = SnackRequestPagination
 
@@ -113,13 +114,6 @@ class SnackEmotionViewSet(mixins.CreateModelMixin,
         else:
             self.permission_classes = []
         return super().get_permissions()
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class AcceptedMonthListView(APIView):
