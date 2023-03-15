@@ -6,16 +6,32 @@
 
 {% block extra-script %}
     <script>
-        var url_parts = window.location.href.split('/');
-        $(".list-name").text(url_parts[5]+"년 "+url_parts[6]+"월 비치 예정 목록");
-        $.ajax({
-            url: "/api/snack_request/monthly_list/"+url_parts[5]+"/"+url_parts[6]+"/",
-            type: "GET",
-            dataType: "json",
-        }).done(function(res){
-            snackRequestListDone(res);
-        }).fail(function(request, status, error){
-            alert(request.responseText);
-        })
+        function getPaginatedSnackData(currentPage) {
+            var pageSize = 10;
+            var url_parts = window.location.href.split('/');
+            supplyYear = url_parts[5];
+            supplyMonth = url_parts[6];
+            $(".list-name").text(supplyYear+"년 "+supplyMonth+"월 비치 예정 목록");
+            $('#all-snack-table > tbody').empty();
+            $.ajax({
+                url: "/api/snack_request/?supply_year=" + supplyYear + "&supply_month=" + supplyMonth + "&page=" + currentPage,
+                type: "GET",
+                dataType: "json",
+            }).done(function (res) {
+                var snackRequests = res.results;
+                snackRequestListDone(snackRequests);
+                var totalPage = parseInt((Number(res.count)-1)/pageSize)+1;
+                if(res.previous==null) var navStr = "<li class=\"page-item disabled\"><a class=\"page-link\">Previous</a></li>";
+                else var navStr = "<li class=\"page-item\"><a href=\"#\" class=\"page-link\" onclick=\"getPaginatedSnackData("+(currentPage-1)+")\">Previous</a></li>";
+                navStr += "<li class=\"ms-3 me-3 mt-1\"><span class=\"align-middle\">Page "+currentPage+" of "+totalPage+"</span></li>";
+                if(res.next==null) navStr += "<li class=\"page-item disabled\"><a class=\"page-link\">Next</a></li>";
+                else navStr += "<li class=\"page-item\"><a href=\"#\" class=\"page-link\" onclick=\"getPaginatedSnackData("+(currentPage+1)+")\">Next</a></li>";
+                $('#pagination-nav > ul:last').html(navStr);
+            }).fail(function(request, status, error){
+                alert("/api/snack_request/monthly_list/?supply_year=" + supplyYear + "&supply_month=" + supplyMonth + "&page=" + currentPage)
+                alert(request.responseText);
+            })
+        }
+        getPaginatedSnackData(1);
     </script>
 {% endblock %}

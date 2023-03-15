@@ -28,7 +28,7 @@ class UserViewSet(mixins.ListModelMixin,
             return BaseUserSerializer
 
     # /api/user/9/upgrade/
-    @action(detail=True)
+    @action(detail=True) # 통일할 수 있는 선에서 통일
     def upgrade(self, request, pk):
         user = User.objects.get(pk=pk)
         user.is_staff = True
@@ -47,7 +47,7 @@ class UserViewSet(mixins.ListModelMixin,
 
     # /api/user/quit/
     @action(detail=False)
-    def quit(self, request):
+    def quit(self, request): # 사용자 입장에서 제거되는 것이라면 delete!!
         # userId = Token.objects.get(key=request.auth.key).user_id
         # user = User.objects.get(id=userId)
         user = request.user

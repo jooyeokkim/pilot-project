@@ -7,8 +7,7 @@ from rest_framework import routers
 
 from user import views
 from snack.views import SnackRequestListView
-from snack.api_views import SnackRequestViewSet, SnackEmotionViewSet
-from user.api_views import UserViewSet
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,17 +24,14 @@ urlpatterns += [
 ]
 
 urlpatterns += [
-    path('api/snack_request/', include('snack.api_urls')),
-    path('api/user/', include('user.api_urls')),
-]
-
-urlpatterns += [
     path('manage/user/', views.UserListView.as_view(), name='user_list'),
 ]
 
 router = routers.SimpleRouter()
-router.register('api/snack_request', SnackRequestViewSet)
-router.register('api/user', UserViewSet)
-router.register('api/snack_emotion', SnackEmotionViewSet)
+
+urlpatterns += [
+    path('api/snack_request/', include('snack.api_urls')),
+    path('api/user/', include('user.api_urls')),
+]
 
 urlpatterns += router.urls

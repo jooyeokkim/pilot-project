@@ -40,6 +40,13 @@ class SnackRequestManageSerializer(serializers.ModelSerializer):
             pass
         return attrs
 
+    def update(self, instance, validated_data):
+        request = self.context['request']
+        if request.data.get('is_accepted') == 'off':
+            instance.supply_year = None
+            instance.supply_month = None
+        return super().update(instance, validated_data)
+
 
 class SnackRequestEnrollSerializer(serializers.ModelSerializer):
     class Meta:
@@ -75,7 +82,7 @@ class SnackEmotionSerializer(serializers.ModelSerializer):
         fields = ['snack_request', 'name']
 
     def create(self, validated_data):
-        request = self.context.get('request', None)
+        request = self.context['request']
         validated_name = validated_data['name']
         emotion, is_created = SnackEmotion.objects.get_or_create(snack_request=validated_data['snack_request'], user=request.user, defaults={'name': validated_name}) # defaults는 생성시에만 동작
         if not is_created:

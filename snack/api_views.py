@@ -1,4 +1,5 @@
 from django.db.models import Q
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, mixins, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
@@ -20,6 +21,8 @@ class SnackRequestViewSet(mixins.CreateModelMixin,
     queryset = SnackRequest.objects.order_by_like_proportion()
     serializer_class = SnackRequestSerializer
     pagination_class = SnackRequestPagination
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['supply_year', 'supply_month']
 
     def get_permissions(self):
         if self.action in ['list', 'retrieve', 'monthly_snack_list', 'legacy_list']:
@@ -31,23 +34,6 @@ class SnackRequestViewSet(mixins.CreateModelMixin,
         else:
             self.permission_classes = [IsAuthenticated]
         return super().get_permissions()
-
-    def update(self, request, *args, **kwargs):
-        partial = kwargs.pop('partial', False)
-        instance = self.get_object()
-        if request.data.get('is_accepted') == 'off':
-            instance.supply_year = None
-            instance.supply_month = None
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-
-        if getattr(instance, '_prefetched_objects_cache', None):
-            # If 'prefetch_related' has been applied to a queryset, we need to
-            # forcibly invalidate the prefetch cache on the instance.
-            instance._prefetched_objects_cache = {}
-
-        return Response(serializer.data)
 
     # /api/snack_request/legacy_list/
     @action(detail=False, pagination_class=SnackRequestPagination)
@@ -66,13 +52,6 @@ class SnackRequestViewSet(mixins.CreateModelMixin,
     @action(methods=['patch'], detail=True, serializer_class=SnackRequestManageSerializer)
     def manage(self, request, *args, **kwargs):
         return self.partial_update(request, *args, **kwargs)
-
-    # /api/snack_request/monthly_list/2023/3/
-    @action(url_path=r"monthly_list/(?P<year>\w+)/(?P<month>\w+)", detail=False)
-    def monthly_snack_list(self, request, year, month):
-        qs = self.queryset.filter(supply_year__exact=year, supply_month__exact=month)
-        serializer = self.get_serializer(qs, many=True)
-        return Response(serializer.data)
 
     # /api/snack_request/enroll/
     @action(methods=['post'], detail=False, serializer_class=SnackRequestEnrollSerializer)

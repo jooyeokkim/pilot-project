@@ -1,9 +1,12 @@
 from django.urls import path
 
-from .api_views import LoginView
+from djangoProject.urls import router
+from .api_views import LoginView, UserViewSet
 
 app_name="api_user"
 urlpatterns = [
-    # /api/api_user/login/
+    # /api/user/login/
     path('login/', LoginView.as_view()),
 ]
+
+router.register('api/user', UserViewSet)

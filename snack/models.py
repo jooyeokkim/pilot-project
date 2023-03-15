@@ -73,7 +73,7 @@ class SnackEmotion(models.Model):
         LIKE = 'like', '좋아요'
         DISLIKE = 'dislike', '싫어요'
 
-    name = models.CharField('name', max_length=50, choices=EmotionCategory.choices)
+    name = models.CharField('name', max_length=50, choices=EmotionCategory.choices) # type 변수이름
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="snackEmotions")
     snack_request = models.ForeignKey(SnackRequest, on_delete=models.CASCADE, related_name="snackEmotions")
 
