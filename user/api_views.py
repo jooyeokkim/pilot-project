@@ -1,6 +1,5 @@
 from rest_framework import generics, viewsets, mixins, status
 from rest_framework.authtoken.models import Token
-from rest_framework.decorators import action
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 
@@ -11,6 +10,7 @@ from .serializers import RegisterSerializer, LoginSerializer, BaseUserSerializer
 class UserViewSet(mixins.ListModelMixin,
                   mixins.CreateModelMixin,
                   mixins.UpdateModelMixin,
+                  mixins.DestroyModelMixin,
                   viewsets.GenericViewSet):
     queryset = User.objects.all()
 
@@ -27,34 +27,10 @@ class UserViewSet(mixins.ListModelMixin,
         else:
             return BaseUserSerializer
 
-    # /api/user/9/upgrade/
-    @action(detail=True) # 통일할 수 있는 선에서 통일
-    def upgrade(self, request, pk):
-        user = User.objects.get(pk=pk)
-        user.is_staff = True
-        user.is_superuser = True
-        user.save()
-        return Response(status=status.HTTP_200_OK)
 
-    # /api/user/9/downgrade/
-    @action(detail=True)
-    def downgrade(self, request, pk):
-        user = User.objects.get(pk=pk)
-        user.is_staff = False
-        user.is_superuser = False
-        user.save()
-        return Response(status=status.HTTP_200_OK)
-
-    # /api/user/quit/
-    @action(detail=False)
-    def quit(self, request): # 사용자 입장에서 제거되는 것이라면 delete!!
-        # userId = Token.objects.get(key=request.auth.key).user_id
-        # user = User.objects.get(id=userId)
-        user = request.user
-        user.is_active = False
-        user.save()
-        return Response(status=status.HTTP_200_OK)
-
+# 토큰으로 직접 유저 찾기
+# userId = Token.objects.get(key=request.auth.key).user_id
+# user = User.objects.get(id=userId)
 
 class LoginView(generics.GenericAPIView):
     serializer_class = LoginSerializer
@@ -65,6 +41,7 @@ class LoginView(generics.GenericAPIView):
         token = serializer.validated_data
         return Response(
             {
+                "id": token.user.id,
                 "username": token.user.username,
                 "token": token.key,
             },

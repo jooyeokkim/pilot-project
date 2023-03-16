@@ -75,10 +75,10 @@
         function enroll() {
             var formData = new FormData($('#enroll-form')[0]);
             // formData.append("image", $('[name="image"]')[0].files[0]);
-            var enroll = "enroll";
-            if (!formData.get("snack")) enroll = "new_enroll";
+            var enroll = "";
+            if (!formData.get("snack")) enroll = "new_enroll/";
             $.ajax({
-                url: "/api/snack_request/" + enroll + "/",
+                url: "/api/snack_request/"+enroll,
                 type: "POST",
                 headers: {
                     "Authorization": "Token " + token,

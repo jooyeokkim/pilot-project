@@ -41,3 +41,7 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.email
+
+    def delete(self):
+        self.is_active = False
+        self.save()

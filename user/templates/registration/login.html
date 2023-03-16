@@ -43,6 +43,7 @@
                 processData: false,
                 contentType: false,
             }).done(function(res){
+                localStorage.setItem("snack_id", res.id);
                 localStorage.setItem("snack_username", res.username);
                 localStorage.setItem("snack_token", res.token);
                 window.location.replace('/');

@@ -27,26 +27,6 @@
 
 {% block extra-script %}
     <script>
-        function express(emotion, snackRequestId) {
-            $.ajax({
-                url: "/api/snack_emotion/",
-                type: "POST",
-                data: {
-                    "name": emotion,
-                    "snack_request": snackRequestId
-                },
-                headers: {
-                    "Authorization": "Token " + token,
-                },
-                dataType: "json",
-            }).done(function (res) {
-                window.location.reload();
-            }).fail(function (request, status, error) {
-                alert(request.responseText);
-            })
-        }
-
-
         function getPaginatedSnackData(currentPage) {
             var pageSize = 10;
             $('#all-snack-table > tbody').empty();
@@ -57,13 +37,7 @@
             }).done(function (res) {
                 var snackRequests = res.results;
                 snackRequestListDone(snackRequests);
-                var totalPage = parseInt((Number(res.count) - 1) / pageSize) + 1;
-                if (res.previous == null) var navStr = "<li class=\"page-item disabled\"><a class=\"page-link\">Previous</a></li>";
-                else var navStr = "<li class=\"page-item\"><a href=\"#\" class=\"page-link\" onclick=\"getPaginatedSnackData(" + (currentPage - 1) + ")\">Previous</a></li>";
-                navStr += "<li class=\"ms-3 me-3 mt-1\"><span class=\"align-middle\">Page " + currentPage + " of " + totalPage + "</span></li>";
-                if (res.next == null) navStr += "<li class=\"page-item disabled\"><a class=\"page-link\">Next</a></li>";
-                else navStr += "<li class=\"page-item\"><a href=\"#\" class=\"page-link\" onclick=\"getPaginatedSnackData(" + (currentPage + 1) + ")\">Next</a></li>";
-                $('#pagination-nav > ul:last').html(navStr);
+                createSnackNav(res, pageSize, currentPage);
             }).fail(function (request, status, error) {
                 alert(request.responseText);
             })

@@ -1,4 +1,3 @@
-from django.db.models import Q
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, mixins, status
 from rest_framework.decorators import action
@@ -7,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from utils import date
+from .filters import SnackRequestFilter
 from .pagination import SnackRequestPagination
 from .permissions import IsSnackRequestOwnerOrAdmin
 from .serializers import *
@@ -19,13 +19,20 @@ class SnackRequestViewSet(mixins.CreateModelMixin,
                           viewsets.GenericViewSet):
 
     queryset = SnackRequest.objects.order_by_like_proportion()
-    serializer_class = SnackRequestSerializer
     pagination_class = SnackRequestPagination
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['supply_year', 'supply_month']
+    filterset_class = SnackRequestFilter
+
+    serializer_class_dict = {
+        'list': SnackRequestSerializer,
+        'partial_update': SnackRequestEditSerializer,
+        'manage': SnackRequestManageSerializer,
+        'create': SnackRequestEnrollSerializer,
+        'new_enroll': SnackRequestNewEnrollSerializer
+    }
 
     def get_permissions(self):
-        if self.action in ['list', 'retrieve', 'monthly_snack_list', 'legacy_list']:
+        if self.action in ['list']:
             self.permission_classes = []
         elif self.action in ['partial_update', 'destroy']:
             self.permission_classes = [IsSnackRequestOwnerOrAdmin]
@@ -35,36 +42,16 @@ class SnackRequestViewSet(mixins.CreateModelMixin,
             self.permission_classes = [IsAuthenticated]
         return super().get_permissions()
 
-    # /api/snack_request/legacy_list/
-    @action(detail=False, pagination_class=SnackRequestPagination)
-    def legacy_list(self, request):
-        year, month = date.get_month_list()[0] # 2022, 9
-        legacy_qs = self.queryset.filter(Q(supply_year__lt=year)|Q(supply_year=year, supply_month__lt=month))
-        queryset = self.filter_queryset(legacy_qs)
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
+    def get_serializer_class(self):
+        return self.serializer_class_dict.get(self.action)
 
     # /api/snack_request/52/manage/
-    @action(methods=['patch'], detail=True, serializer_class=SnackRequestManageSerializer)
+    @action(methods=['patch'], detail=True)
     def manage(self, request, *args, **kwargs):
         return self.partial_update(request, *args, **kwargs)
 
-    # /api/snack_request/enroll/
-    @action(methods=['post'], detail=False, serializer_class=SnackRequestEnrollSerializer)
-    def enroll(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        snack = Snack.objects.get(id=request.data.get('snack'))
-        serializer.save(user=request.user, snack=snack)
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
     # /api/snack_request/new_enroll/
-    @action(methods=['post'], detail=False, serializer_class=SnackRequestNewEnrollSerializer)
+    @action(methods=['post'], detail=False)
     def new_enroll(self, request, *args, **kwargs):
         data = {
             'snack': {
@@ -99,4 +86,4 @@ class AcceptedMonthListView(APIView):
 
     # /api/snack_request/month_list/
     def get(self, request):
-        return Response({"month_list": date.get_month_list()})
+        return Response({"year_month_list": date.get_year_month_list()})

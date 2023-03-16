@@ -3,6 +3,7 @@ from django.db import models
 from django.db.models import Count, Q, Case, When, FloatField, F
 
 from user.models import User
+from utils import date
 
 
 class Snack(models.Model):
@@ -40,8 +41,8 @@ class SnackRequest(models.Model):
     snack = models.ForeignKey(Snack, on_delete=models.CASCADE, related_name="snackRequests")
     description = models.CharField('DESCRIPTION', max_length=300, blank=True, help_text=' 예) 5개 주문해주세요!')
     is_accepted = models.BooleanField('IS_ACCEPTED', default=False)
-    supply_year = models.PositiveSmallIntegerField('SUPPLY_YEAR', null=True, blank=True, help_text=' 예) 2023')
-    supply_month = models.PositiveSmallIntegerField(
+    supply_year = models.IntegerField('SUPPLY_YEAR', null=True, blank=True, help_text=' 예) 2023')
+    supply_month = models.IntegerField(
         'SUPPLY_MONTH', null=True, blank=True,
         validators=[
             MaxValueValidator(12),

@@ -81,13 +81,15 @@
         type: "GET",
         dataType: "json",
     }).done(function (res) {
-        var dateList = res.month_list;
+        var dateList = res.year_month_list;
         $('#month_list').append("<li><a class=\"dropdown-item\" href=\"/snack/legacy_list/\">이전 간식들</a></li>");
         for (var i = 0; i < dateList.length; i++) {
             var date = dateList[i]
             var href = "<li><a class=\"dropdown-item\" href=\"/snack/monthly_list/" + date[0] + "/" + date[1] + "/\">" + date[0] + "년 " + date[1] + "월</a></li>";
             $('#month_list').append(href);
         }
+    }).fail(function (request, status, error) {
+        alert(request.responseText);
     })
 </script>
 {% block extra-script %}{% endblock %}

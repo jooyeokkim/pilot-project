@@ -1,3 +1,4 @@
+from django.core.validators import MaxValueValidator, MinValueValidator
 from rest_framework import serializers
 
 from snack.models import Snack, SnackRequest, SnackEmotion
@@ -24,7 +25,19 @@ class SnackRequestSerializer(serializers.ModelSerializer):
                   'supply_month', 'create_dt']
 
 
+class SnackRequestEditSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SnackRequest
+        fields = ['description', 'is_accepted', 'supply_year', 'supply_month']
+
+
 class SnackRequestManageSerializer(serializers.ModelSerializer):
+    supply_year = serializers.IntegerField()
+    supply_month = serializers.IntegerField(validators=[
+            MaxValueValidator(12),
+            MinValueValidator(1),
+        ])
+
     class Meta:
         model = SnackRequest
         fields = ['description', 'is_accepted', 'supply_year', 'supply_month']
@@ -60,6 +73,12 @@ class SnackRequestEnrollSerializer(serializers.ModelSerializer):
                 {'snack': '이미 주문 대기중인 간식입니다.'}
             )
         return attrs
+
+    def create(self, validated_data):
+        request = self.context['request']
+        snack = validated_data.pop('snack')
+        snackRequest = SnackRequest.objects.create(snack=snack, user=request.user, **validated_data)
+        return snackRequest
 
 
 class SnackRequestNewEnrollSerializer(serializers.ModelSerializer):
