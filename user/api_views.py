@@ -15,9 +15,9 @@ class UserViewSet(mixins.ListModelMixin,
     queryset = User.objects.all()
 
     def get_permissions(self):
-        if self.action in ['partial_update']:
+        if self.action in ['partial_update', 'update']:
             self.permission_classes = [IsAdminUser]
-        elif self.action in ['delete']:
+        elif self.action in ['destroy']:
             self.permission_classes = [IsAuthenticated]
         return super().get_permissions()
 
